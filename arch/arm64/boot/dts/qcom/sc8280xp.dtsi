@@ -3999,7 +3999,6 @@
 			interrupt-controller;
 			#interrupt-cells = <2>;
 			gpio-ranges = <&tlmm 0 0 230>;
-
 		};
 
 		apps_smmu: iommu@15000000 {
