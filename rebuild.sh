@@ -11,4 +11,4 @@ dh_clean
 
 rm -rf debian/build/build-generic/_____________________________________dkms/
 
-time debuild --no-lintian -b -nc -uc -us -d
+time debuild --no-lintian -b -d
