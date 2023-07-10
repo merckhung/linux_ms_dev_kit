@@ -21,6 +21,13 @@
 	model = "Microsoft Dev Kit 2023";
 	compatible = "microsoft,dev-kit-2023", "qcom,sc8280xp";
 
+	soc: soc@0 {
+		clock-controller@100000 {
+			//this portion is apparrently disabled in the WDK2023, variable to parse in gcc_sc8280xp_probe()
+			pcie_3a_disabled = <1>; // Set to 1 to disable, 0 to enable
+		};
+	};
+
 	aliases {
 		serial1 = &uart2;
 	};
@@ -580,8 +587,6 @@
 };
 
 &pcie3a {
-	//this portion is apparrently disabled in the WDK2023, variable to parse in gcc_sc8280xp_probe()
-	pcie_3a_disabled = <1>; // Set to 1 to disable, 0 to enable
 	perst-gpios = <&tlmm 151 GPIO_ACTIVE_LOW>;
 	wake-gpios = <&tlmm 148 GPIO_ACTIVE_LOW>;
 
