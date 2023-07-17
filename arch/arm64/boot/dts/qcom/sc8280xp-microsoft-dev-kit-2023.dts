@@ -323,7 +323,110 @@
 	};
 };
 
+&remoteproc_adsp {
+	firmware-name = "qcom/sc8280xp/MICROSOFT/DEVKIT23/qcadsp8280.mbn";
+
+	status = "okay";
+};
+
+&remoteproc_nsp0 {
+	firmware-name = "qcom/sc8280xp/MICROSOFT/DEVKIT23/qccdsp8280.mbn";
+
+	status = "okay";
+};
+
 &adreno_smmu {
+	status = "okay";
+};
+
+&usb_0 {
+	status = "okay";
+};
+
+&usb_0_dwc3 {
+	dr_mode = "host";
+};
+
+&usb_0_hsphy {
+	vdda-pll-supply = <&vreg_l9d>;
+	vdda18-supply = <&vreg_l1c>;
+	vdda33-supply = <&vreg_l7d>;
+
+	status = "okay";
+};
+
+&usb_0_qmpphy {
+	vdda-phy-supply = <&vreg_l9d>;
+	vdda-pll-supply = <&vreg_l4d>;
+
+	status = "okay";
+};
+
+&usb_0_role_switch {
+	remote-endpoint = <&pmic_glink_con0_hs>;
+};
+
+&usb_1 {
+	status = "okay";
+};
+
+&usb_1_dwc3 {
+	dr_mode = "host";
+};
+
+&usb_1_hsphy {
+	vdda-pll-supply = <&vreg_l4b>;
+	vdda18-supply = <&vreg_l1c>;
+	vdda33-supply = <&vreg_l13c>;
+
+	status = "okay";
+};
+
+&usb_1_qmpphy {
+	vdda-phy-supply = <&vreg_l4b>;
+	vdda-pll-supply = <&vreg_l3b>;
+
+	status = "okay";
+};
+
+&usb_1_role_switch {
+	remote-endpoint = <&pmic_glink_con1_hs>;
+};
+
+&usb_2 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&usb2_en_state>;
+
+	status = "okay";
+};
+
+&usb_2_dwc3 {
+	dr_mode = "host";
+	phy-names = "usb2-port0", "usb3-port0";
+	phys = <&usb_2_hsphy0>, <&usb_2_qmpphy0>;
+};
+
+&usb_2_hsphy0 {
+	status = "okay";
+};
+
+&usb_2_hsphy1 {
+	status = "okay";
+};
+
+&usb_2_hsphy2 {
+	status = "okay";
+};
+
+&usb_2_hsphy3 {
+	status = "okay";
+};
+
+&usb_2_qmpphy0 {
+	status = "okay";
+};
+
+&usb_2_qmpphy1 {
 	status = "okay";
 };
 
@@ -586,25 +689,6 @@
 	status = "okay";
 };
 
-&pcie3a {
-	perst-gpios = <&tlmm 151 GPIO_ACTIVE_LOW>;
-	wake-gpios = <&tlmm 148 GPIO_ACTIVE_LOW>;
-
-	vddpe-3v3-supply = <&vreg_wwan>;
-
-	pinctrl-names = "default";
-	pinctrl-0 = <&pcie3a_default>;
-
-	// status = "okay";
-};
-
-&pcie3a_phy {
-	vdda-phy-supply = <&vreg_l6d>;
-	vdda-pll-supply = <&vreg_l4d>;
-
-	// status = "okay";
-};
-
 &pcie4 {
 	perst-gpios = <&tlmm 141 GPIO_ACTIVE_LOW>;
 	wake-gpios = <&tlmm 139 GPIO_ACTIVE_LOW>;
@@ -839,18 +923,6 @@
 	status = "okay";
 };
 
-&remoteproc_adsp {
-	firmware-name = "qcom/sc8280xp/MICROSOFT/DEVKIT23/qcadsp8280.mbn";
-
-	status = "okay";
-};
-
-&remoteproc_nsp0 {
-	firmware-name = "qcom/sc8280xp/MICROSOFT/DEVKIT23/qccdsp8280.mbn";
-
-	status = "okay";
-};
-
 &rxmacro {
 	status = "okay";
 };
@@ -985,97 +1057,6 @@
 		pinctrl-0 = <&bt_default>;
 		pinctrl-names = "default";
 	};
-};
-
-&usb_0 {
-	status = "okay";
-};
-
-&usb_0_dwc3 {
-	dr_mode = "host";
-};
-
-&usb_0_hsphy {
-	vdda-pll-supply = <&vreg_l9d>;
-	vdda18-supply = <&vreg_l1c>;
-	vdda33-supply = <&vreg_l7d>;
-
-	status = "okay";
-};
-
-&usb_0_qmpphy {
-	vdda-phy-supply = <&vreg_l9d>;
-	vdda-pll-supply = <&vreg_l4d>;
-
-	status = "okay";
-};
-
-&usb_0_role_switch {
-	remote-endpoint = <&pmic_glink_con0_hs>;
-};
-
-&usb_1 {
-	status = "okay";
-};
-
-&usb_1_dwc3 {
-	dr_mode = "host";
-};
-
-&usb_1_hsphy {
-	vdda-pll-supply = <&vreg_l4b>;
-	vdda18-supply = <&vreg_l1c>;
-	vdda33-supply = <&vreg_l13c>;
-
-	status = "okay";
-};
-
-&usb_1_qmpphy {
-	vdda-phy-supply = <&vreg_l4b>;
-	vdda-pll-supply = <&vreg_l3b>;
-
-	status = "okay";
-};
-
-&usb_1_role_switch {
-	remote-endpoint = <&pmic_glink_con1_hs>;
-};
-
-&usb_2 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&usb2_en_state>;
-
-	status = "okay";
-};
-
-&usb_2_dwc3 {
-	dr_mode = "host";
-	phy-names = "usb2-port0", "usb3-port0";
-	phys = <&usb_2_hsphy0>, <&usb_2_qmpphy0>;
-};
-
-&usb_2_hsphy0 {
-	status = "okay";
-};
-
-&usb_2_hsphy1 {
-	status = "okay";
-};
-
-&usb_2_hsphy2 {
-	status = "okay";
-};
-
-&usb_2_hsphy3 {
-	status = "okay";
-};
-
-&usb_2_qmpphy0 {
-	status = "okay";
-};
-
-&usb_2_qmpphy1 {
-	status = "okay";
 };
 
 &vamacro {
