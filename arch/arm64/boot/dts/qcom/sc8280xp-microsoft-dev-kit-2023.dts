@@ -157,7 +157,6 @@
 		pinctrl-0 = <&misc_3p3_reg_en>;
 
 		regulator-boot-on;
-		regulator-always-on;
 	};
 
 	vreg_nvme: regulator-nvme {
@@ -172,9 +171,6 @@
 
 		pinctrl-names = "default";
 		pinctrl-0 = <&nvme_reg_en>;
-
-		regulator-boot-on;
-		regulator-always-on;
 	};
 
 	vreg_vph_pwr: regulator-vph-pwr {
@@ -202,7 +198,6 @@
 		pinctrl-0 = <&hastings_reg_en>;
 
 		regulator-boot-on;
-		regulator-always-on;
 	};
 
 	vreg_wwan: regulator-wwan {
@@ -219,7 +214,6 @@
 		pinctrl-0 = <&wwan_sw_en>;
 
 		regulator-boot-on;
-		regulator-always-on;
 	};
 
 	reserved-memory {
@@ -339,12 +333,30 @@
 	status = "okay";
 };
 
+&qup0 {
+	status = "okay";
+};
+
+&qup1 {
+	status = "okay";
+};
+
+&qup2 {
+	status = "okay";
+};
+
+&rxmacro {
+	status = "okay";
+};
+
 &usb_0 {
 	status = "okay";
 };
 
 &usb_0_dwc3 {
 	dr_mode = "host";
+
+	status = "okay";
 };
 
 &usb_0_hsphy {
@@ -404,6 +416,8 @@
 	dr_mode = "host";
 	phy-names = "usb2-port0", "usb3-port0";
 	phys = <&usb_2_hsphy0>, <&usb_2_qmpphy0>;
+
+	status = "okay";
 };
 
 &usb_2_hsphy0 {
@@ -454,7 +468,6 @@
 			regulator-min-microvolt = <1272000>;
 			regulator-max-microvolt = <1272000>;
 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-			regulator-always-on;
 		};
 
 		vreg_s12b: smps12 {
@@ -462,7 +475,6 @@
 			regulator-min-microvolt = <984000>;
 			regulator-max-microvolt = <984000>;
 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-			regulator-always-on;
 		};
 
 		vreg_l3b: ldo3 {
@@ -471,7 +483,6 @@
 			regulator-max-microvolt = <1200000>;
 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
 			regulator-boot-on;
-			regulator-always-on;
 		};
 
 		vreg_l4b: ldo4 {
@@ -487,7 +498,6 @@
 			regulator-max-microvolt = <880000>;
 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
 			regulator-boot-on;
-			regulator-always-on;
 		};
 	};
 
@@ -507,7 +517,8 @@
 			regulator-min-microvolt = <1880000>;
 			regulator-max-microvolt = <1900000>;
 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-			regulator-always-on;
+			regulator-boot-on;
+			regulator-always-on;		
 		};
 
 		vreg_l1c: ldo1 {
@@ -536,7 +547,8 @@
 			regulator-min-microvolt = <3008000>;
 			regulator-max-microvolt = <3960000>;
 			regulator-initial-mode = <RPMH_REGULATOR_MODE_AUTO>;
-			regulator-always-on;
+			regulator-boot-on;
+			regulator-always-on;		
 		};
 	};
 
@@ -555,6 +567,9 @@
 			regulator-min-microvolt = <1200000>;
 			regulator-max-microvolt = <1200000>;
 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+			regulator-allow-set-load;
+			regulator-allowed-modes = <RPMH_REGULATOR_MODE_LPM
+						   RPMH_REGULATOR_MODE_HPM>;
 		};
 
 		vreg_l4d: ldo4 {
@@ -631,36 +646,10 @@
 };
 
 &mdss0_dp2 {
-  compatible = "qcom,sc8280xp-edp";
-
-  data-lanes = <0 1 2 3>;
+	compatible = "qcom,sc8280xp-dp";
+	data-lanes = <0 1 2 3>;
 
 	status = "okay";
-
-	aux-bus {
-		panel {
-			compatible = "edp-panel";
-
-
-			pinctrl-names = "default";
-			pinctrl-0 = <&edp_hot_plug_det>;
-
-			port@1 {
-				edp_panel_in: endpoint {
-					remote-endpoint = <&mdss0_dp2_out>;
-				};
-			};
-		};
-	};
-
-	ports {
-		port@1 {
-			reg = <1>;
-			mdss0_dp2_out: endpoint {
-				remote-endpoint = <&edp_panel_in>;
-			};
-		};
-	};
 };
 
 &mdss0_dp2_phy {
@@ -909,22 +898,6 @@
 		qcom,pre-scaling = <1 1>;
 		label = "pmr735a_die_temp";
 	};
-};
-
-&qup0 {
-	status = "okay";
-};
-
-&qup1 {
-	status = "okay";
-};
-
-&qup2 {
-	status = "okay";
-};
-
-&rxmacro {
-	status = "okay";
 };
 
 &sound {
