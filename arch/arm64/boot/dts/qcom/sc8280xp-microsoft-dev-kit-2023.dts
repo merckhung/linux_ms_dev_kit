@@ -21,17 +21,10 @@
 	model = "Microsoft Dev Kit 2023";
 	compatible = "microsoft,dev-kit-2023", "qcom,sc8280xp";
 
-	soc: soc@0 {
-		clock-controller@100000 {
-			//this portion is apparrently disabled in the WDK2023, variable to parse in gcc_sc8280xp_probe()
-			pcie_3a_disabled = <1>; // Set to 1 to disable, 0 to enable
-		};
-	};
-
 	aliases {
 		serial1 = &uart2;
 	};
-
+		
 	wcd938x: audio-codec {
 		compatible = "qcom,wcd9380-codec";
 
@@ -139,6 +132,20 @@
 						remote-endpoint = <&usb1_sbu_mux>;
 					};
 				};
+			};
+		};
+	};
+
+	dp1-connector@0 {
+		compatible = "dp-connector";
+		label = "DP1";
+		type = "mini";
+
+		//hpd-gpios = <&tlmm 2 GPIO_ACTIVE_HIGH>;
+
+		port {
+			dp1_connector_in: endpoint {
+				remote-endpoint = <&mdss0_dp2_phy_out>;
 			};
 		};
 	};
@@ -317,130 +324,12 @@
 	};
 };
 
-&remoteproc_adsp {
-	firmware-name = "qcom/sc8280xp/MICROSOFT/DEVKIT23/qcadsp8280.mbn";
-
-	status = "okay";
-};
-
-&remoteproc_nsp0 {
-	firmware-name = "qcom/sc8280xp/MICROSOFT/DEVKIT23/qccdsp8280.mbn";
-
-	status = "okay";
+&gcc{
+	//this PCIe bus is apparrently disabled in the WDK2023, variable to parse in gcc_sc8280xp_probe()
+	pcie_3a_disabled = <1>; // Set to 1 to disable, 0 to enable
 };
 
 &adreno_smmu {
-	status = "okay";
-};
-
-&qup0 {
-	status = "okay";
-};
-
-&qup1 {
-	status = "okay";
-};
-
-&qup2 {
-	status = "okay";
-};
-
-&rxmacro {
-	status = "okay";
-};
-
-&usb_0 {
-	status = "okay";
-};
-
-&usb_0_dwc3 {
-	dr_mode = "host";
-
-	status = "okay";
-};
-
-&usb_0_hsphy {
-	vdda-pll-supply = <&vreg_l9d>;
-	vdda18-supply = <&vreg_l1c>;
-	vdda33-supply = <&vreg_l7d>;
-
-	status = "okay";
-};
-
-&usb_0_qmpphy {
-	vdda-phy-supply = <&vreg_l9d>;
-	vdda-pll-supply = <&vreg_l4d>;
-
-	status = "okay";
-};
-
-&usb_0_role_switch {
-	remote-endpoint = <&pmic_glink_con0_hs>;
-};
-
-&usb_1 {
-	status = "okay";
-};
-
-&usb_1_dwc3 {
-	dr_mode = "host";
-};
-
-&usb_1_hsphy {
-	vdda-pll-supply = <&vreg_l4b>;
-	vdda18-supply = <&vreg_l1c>;
-	vdda33-supply = <&vreg_l13c>;
-
-	status = "okay";
-};
-
-&usb_1_qmpphy {
-	vdda-phy-supply = <&vreg_l4b>;
-	vdda-pll-supply = <&vreg_l3b>;
-
-	status = "okay";
-};
-
-&usb_1_role_switch {
-	remote-endpoint = <&pmic_glink_con1_hs>;
-};
-
-&usb_2 {
-	pinctrl-names = "default";
-	pinctrl-0 = <&usb2_en_state>;
-
-	status = "okay";
-};
-
-&usb_2_dwc3 {
-	dr_mode = "host";
-	phy-names = "usb2-port0", "usb3-port0";
-	phys = <&usb_2_hsphy0>, <&usb_2_qmpphy0>;
-
-	status = "okay";
-};
-
-&usb_2_hsphy0 {
-	status = "okay";
-};
-
-&usb_2_hsphy1 {
-	status = "okay";
-};
-
-&usb_2_hsphy2 {
-	status = "okay";
-};
-
-&usb_2_hsphy3 {
-	status = "okay";
-};
-
-&usb_2_qmpphy0 {
-	status = "okay";
-};
-
-&usb_2_qmpphy1 {
 	status = "okay";
 };
 
@@ -468,6 +357,7 @@
 			regulator-min-microvolt = <1272000>;
 			regulator-max-microvolt = <1272000>;
 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+			regulator-always-on;
 		};
 
 		vreg_s12b: smps12 {
@@ -475,6 +365,7 @@
 			regulator-min-microvolt = <984000>;
 			regulator-max-microvolt = <984000>;
 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
+			regulator-always-on;
 		};
 
 		vreg_l3b: ldo3 {
@@ -646,10 +537,20 @@
 };
 
 &mdss0_dp2 {
-	compatible = "qcom,sc8280xp-dp";
-	data-lanes = <0 1 2 3>;
+  compatible = "qcom,sc8280xp-dp";
+
+  data-lanes = <0 1 2 3>;
 
 	status = "okay";
+
+	ports {
+		port@1 {
+			reg = <1>;
+			mdss0_dp2_phy_out: endpoint {
+				remote-endpoint = <&dp1_connector_in>;
+			};
+		};
+	};
 };
 
 &mdss0_dp2_phy {
@@ -900,6 +801,34 @@
 	};
 };
 
+&qup0 {
+	status = "okay";
+};
+
+&qup1 {
+	status = "okay";
+};
+
+&qup2 {
+	status = "okay";
+};
+
+&remoteproc_adsp {
+	firmware-name = "qcom/sc8280xp/MICROSOFT/DEVKIT23/qcadsp8280.mbn";
+
+	status = "okay";
+};
+
+&remoteproc_nsp0 {
+	firmware-name = "qcom/sc8280xp/MICROSOFT/DEVKIT23/qccdsp8280.mbn";
+
+	status = "okay";
+};
+
+&rxmacro {
+	status = "okay";
+};
+
 &sound {
 	compatible = "qcom,sc8280xp-sndcard";
 	model = "MICROSOFT/DEVKIT23/devkit23";
@@ -1032,6 +961,101 @@
 	};
 };
 
+&usb_0 {
+	status = "okay";
+};
+
+&usb_0_dwc3 {
+	dr_mode = "host";
+
+	status = "okay";
+};
+
+&usb_0_hsphy {
+	vdda-pll-supply = <&vreg_l9d>;
+	vdda18-supply = <&vreg_l1c>;
+	vdda33-supply = <&vreg_l7d>;
+
+	status = "okay";
+};
+
+&usb_0_qmpphy {
+	vdda-phy-supply = <&vreg_l9d>;
+	vdda-pll-supply = <&vreg_l4d>;
+
+	status = "okay";
+};
+
+&usb_0_role_switch {
+	remote-endpoint = <&pmic_glink_con0_hs>;
+};
+
+&usb_1 {
+	status = "okay";
+};
+
+&usb_1_dwc3 {
+	dr_mode = "host";
+};
+
+&usb_1_hsphy {
+	vdda-pll-supply = <&vreg_l4b>;
+	vdda18-supply = <&vreg_l1c>;
+	vdda33-supply = <&vreg_l13c>;
+
+	status = "okay";
+};
+
+&usb_1_qmpphy {
+	vdda-phy-supply = <&vreg_l4b>;
+	vdda-pll-supply = <&vreg_l3b>;
+
+	status = "okay";
+};
+
+&usb_1_role_switch {
+	remote-endpoint = <&pmic_glink_con1_hs>;
+};
+
+&usb_2 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&usb2_en_state>;
+
+	status = "okay";
+};
+
+&usb_2_dwc3 {
+	dr_mode = "host";
+	phy-names = "usb2-port0", "usb3-port0";
+	phys = <&usb_2_hsphy0>, <&usb_2_qmpphy0>;
+
+	status = "okay";
+};
+
+&usb_2_hsphy0 {
+	status = "okay";
+};
+
+&usb_2_hsphy1 {
+	status = "okay";
+};
+
+&usb_2_hsphy2 {
+	status = "okay";
+};
+
+&usb_2_hsphy3 {
+	status = "okay";
+};
+
+&usb_2_qmpphy0 {
+	status = "okay";
+};
+
+&usb_2_qmpphy1 {
+	status = "okay";
+};
+
 &vamacro {
 	pinctrl-0 = <&dmic01_default>, <&dmic02_default>;
 	pinctrl-names = "default";
@@ -1097,12 +1121,6 @@
 
 &tlmm {
 	gpio-reserved-ranges = <70 2>, <74 6>, <83 4>, <125 2>, <128 2>, <154 7>;
-
-	edp_hot_plug_det: edp-hot-plug-det-state {
-	  pins = "gpio2";
-	  function = "edp_hot";
-	  bias-disabled;
-	};
 
 	bt_default: bt-default-state {
 		hstp-bt-en-pins {
