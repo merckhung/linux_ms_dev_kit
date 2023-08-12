@@ -1,6 +1,6 @@
 Current tip of the development: [based on ubuntu-mainline 6.4.3](https://github.com/jglathe/linux_ms_dev_kit/tree/jg/ms-dev-kit-2023-v6.4.3)
 
-newest fix: miniDP connector should work better now, it doesn't try to enable a panel (and fail) 
+newest fix: MHI bus will be enabled now, works way better this way. USB Boot with rootfs on USB works now. Initrd-compression support is enabled now. 
 
 Original from @chenguokai can be found [here](https://github.com/chenguokai/chenguokai/blob/master/tutorial-dev-kit-linux.md)
 
@@ -32,7 +32,7 @@ git clone https://github.com/merckhung/linux_ms_dev_kit
 
 The source tree is so huge that you may want to do a [shallow clone](https://git-scm.com/docs/shallow). Currently the default branch in the repo is for Dev Kit, but if it changes in the future, remember to checkout the correct branch:
 ```shell
-git checkout ms-dev-kit-2023-v6.3.0
+git checkout ms-dev-kit-2023-v6.4.3
 ```
 
 
@@ -46,18 +46,13 @@ make -j8              # do the actual work, Dev Kit has 8 cores so use 8 threads
 ```
 
 After that you will find `Image` file in `arch/arm64/boot` and `sc8280xp-microsoft-dev-kit-2023.dtb` in `arch/arm64/boot/dts
-/qcom/`. Copy them out to your Windows partition. You will also find `.config` file right in the top of the kernel source tree, copy it to `/boot` in your WSL system. Root priviledge are required for this copy. You will need to adjust the config file name to meet ubuntu's requirement later. Also, it appears to be necessary to add additional lines for update-initramfs to work:
-```
-CONFIG_RD_LZ4=y
-CONFIG_RD_GZIP=y
-```
-They happen to be missing, but are required for update-initramfs to know which compression to use.
+/qcom/`. Copy them out to your Windows partition. You will also find `.config` file right in the top of the kernel source tree, copy it to `/boot` in your WSL system. Root priviledge are required for this copy. You will need to adjust the config file name to meet ubuntu's requirement later.ch compression to use.
 
 Finally, except for the kernel image, you will need kernel modules. You can install it on your WSL system by typing 
 
 ```sudo make modules_install```
 
-You will find your kernel modules in `/lib/modules/6.3.0+`, you will need to put them in the incoming rootfs.
+You will find your kernel modules in `/lib/modules/6.4.3+`, you will need to put them in the incoming rootfs.
 
 ### Rootfs preparation
 
@@ -69,12 +64,12 @@ sudo debootstrap --arch arm64 focal /mnt http://ports.ubuntu.com/ubuntu-ports # 
 You may want to chroot into the new system to setup your root password:
 
 ```
-sudo cp -r /lib/modules/6.3.0+ /mnt/lib/modules/6.3.0+ # copy kernel modules to rootfs
+sudo cp -r /lib/modules/6.4.3+ /mnt/lib/modules/6.4.3+ # copy kernel modules to rootfs
 sudo chroot /mnt
 passwd root
 # you may also install some softwares in this stage
 exit # exit the chroot environment
-sudo update-initramfs -c -k 6.3.0+ # you may need to move your kernel config to a proper name in /boot before it works, this step can also be done in WSL
+sudo update-initramfs -c -k 6.4.3+ # you may need to move your kernel config to a proper name in /boot before it works, this step can also be done in WSL
 ```
 
 After setup, copy the newly generated initrd file in `/boot` (either in WSL2 `/` or `/mnt`) to Windows disk and umount the rootfs and you have got a working ubuntu rootfs.
