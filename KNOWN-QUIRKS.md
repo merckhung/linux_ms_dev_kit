@@ -36,6 +36,7 @@ sudo mkdir -p /lib/firmware/qcom/sc8280xp/MICROSOFT/DEVKIT23/
 ```
 
 ## Power Management is in disarray
+There appear to be some userspace services that support Power Management. [At least it's on the Lenovo Thinkpad X13s this way.](https://wiki.gentoo.org/wiki/ThinkPad_X13s) Looking into it. 
 
 To keep the thing working almost all voltage regulators are set to always on. If you browse in the sc8280xp code, you'll see that power management isn't supported yet by qcom-pcie, leading to the ```pcie_3a_gdsc status stuck at 'off'``` kernel warning. With no further effects, only that pcie3a where WWAN lives is disbled. Likewise, qcom-pmic-glink doesn't get the links it needs to work:
 ```
@@ -77,3 +78,5 @@ The important part is that the target is specified after all rules you want to a
 The wdk also thinks it is on battery power (not AC), and disables the ```apt``` update tasks. 
 
 ## Sound over DP doesn't work yet, USB sound devices do, though
+
+[The template of the Lenovo Thinkpad X13s might be a way to a solution here, too.](https://wiki.gentoo.org/wiki/ThinkPad_X13s) Although it doesn't have a DP connector, its using eDP for connecting the panel. Anyway, sound will not work without setting up the user space ALSA UCM config. I'll try that out and derive from there.
